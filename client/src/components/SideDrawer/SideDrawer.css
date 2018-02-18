@@ -1,0 +1,23 @@
+.SideDrawer {
+    background-color: #59ABE3;
+    /* background-color: purple; */
+    color: #eee;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 65%;
+    height: 100vh;
+    z-index: 200;
+    opacity: 1;
+    transition-property: width, opacity;
+    transition-duration: .65s;
+}
+
+.CloseSideDrawer {
+    width: 0;
+    opacity: 0;
+}
+
+p.exitIcon {
+    text-align: right;
+}
