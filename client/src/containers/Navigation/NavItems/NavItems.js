@@ -2,18 +2,16 @@ import React, {Component} from 'react';
 import './NavItems.css';
 import {Link} from 'react-router-dom';
 
-class NavItems extends Component {
-    render() {
-        return (
-            <ul className={this.props.styleClasses}>
-                <li><Link to="/" onClick={this.props.show}>Home</Link></li>
-                <li><Link to="/authentication">Login/Sign Up</Link></li>
-                <li><Link to="/play">Play</Link></li>
-                <li><Link to="/leaderboard">Leaderboard</Link></li>
-                <li><Link to="/settings">Settings</Link></li>
-            </ul>
-        );
-    }
+const navItems = (props) => {
+    return (
+        <ul className={props.styleClasses}>
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/">Home</Link></li>
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/authentication">Login/Sign Up</Link></li>
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/play">Play</Link></li>
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/leaderboard">Leaderboard</Link></li>
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/settings">Settings</Link></li>
+        </ul>
+    );
 }
 
-export default NavItems;
+export default navItems;

@@ -31,7 +31,11 @@ class Layout extends Component {
             <Auxiliary>
                 <NavBar clicked={this.handleMenuClick} />
                 <Backdrop show={this.state.showSideDrawer} clicked={this.handleBackdropClick}/>
-                <SideDrawer show={this.state.showSideDrawer} clicked={this.handleMenuClick}/>
+                <SideDrawer 
+                    show={this.state.showSideDrawer} 
+                    clicked={this.handleMenuClick} 
+                    closeDrawer={this.handleMenuClick}
+                    drawerStatus={this.state.showSideDrawer}/>
                 <Switch>
                     <Route exact path="/" component={Home} />
                     <Route exact path="/authentication" component={Authentication} />
