@@ -1,12 +1,43 @@
-import React, {Component} from 'react';
-import './GameMenu.css';
+import React, { Component } from "react";
+import "./GameMenu.css";
+import { connect } from "react-redux";
+import * as actionTypes from "../../store/actions/actionTypes";
+import * as actionCreators from "../../store/actions/actionCreators";
 
 class GameMenu extends Component {
-    render() {
-        return (
-            <div>Game entry point</div>
-        );
-    }
+	componentDidMount() {
+		this.props.onFetchCategories();
+	}
+
+	render() {
+
+        let arr = "Loading...";
+		if (this.props.categories) {
+            arr = this.props.categories.map(el => el.name);
+            console.log('arr', arr);
+        } 
+
+		return (
+			<div>
+				<h2>Play - Game entry point</h2>
+                {arr}
+			</div>
+		);
+	}
 }
 
-export default GameMenu;
+const mapStateToProps = state => {
+	return {
+		categories: state.trivia.categories,
+		questions: state.trivia.questions
+	};
+};
+
+const mapDispatchToProps = dispatch => {
+	return {
+		onFetchCategories: () => dispatch(actionCreators.fetchCategories()),
+		onFetchQuestions: () => dispatch({ types: actionTypes.FETCH_QUESTIONS })
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameMenu);

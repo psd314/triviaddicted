@@ -3,7 +3,7 @@ import './Settings.css';
 
 const settings = (props) => {
     return (
-        <div>Profile and preferences</div>
+        <div>Settings - Profile and preferences</div>
     );
 }
 

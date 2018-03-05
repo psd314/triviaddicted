@@ -1,0 +1,3 @@
+export const LOGGED_IN = 'LOGGED_IN';
+export const FETCH_CATEGORIES = 'FETCH_CATEGORIES';
+export const FETCH_QUESTIONS = 'FETCH_QUESTIONS';
