@@ -14,7 +14,6 @@ class GameMenu extends Component {
         let arr = "Loading...";
 		if (this.props.categories) {
             arr = this.props.categories.map(el => el.name);
-            console.log('arr', arr);
         } 
 
 		return (
