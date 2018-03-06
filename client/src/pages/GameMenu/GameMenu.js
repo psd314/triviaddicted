@@ -1,25 +1,53 @@
 import React, { Component } from "react";
 import "./GameMenu.css";
 import { connect } from "react-redux";
-import * as actionTypes from "../../store/actions/actionTypes";
+// import * as actionTypes from "../../store/actions/actionTypes";
 import * as actionCreators from "../../store/actions/actionCreators";
 
 class GameMenu extends Component {
+	state = {
+		categoryId: "" // need to make programatically
+	};
+
 	componentDidMount() {
+		// console.log('state:', this.state.categoryId, ', props:', this.props.categoryId);
 		this.props.onFetchCategories();
 	}
 
-	render() {
+	componentDidUpdate() {
+        // not sure about this pattern, redux complicating things here, probably better served managing 
+        // categoryId and category calls in component state
+        if (this.state.categoryId === "") {
+            this.setState({categoryId: this.props.categoryId});
+        }
+        console.log('props:', this.props, ', state:', this.state);
+	}
 
-        let arr = "Loading...";
+	handleChange = event => {
+		const categoryNumber = event.target.value;
+		this.setState({ categoryId: categoryNumber });
+	};
+
+	render() {
+		let display = "Loading...";
 		if (this.props.categories) {
-            arr = this.props.categories.map(el => el.name);
-        } 
+			display = this.props.categories.map(el => {
+				return (
+					<option data={el.id} value={el.id} key={el.id}>
+						{el.name}
+					</option>
+				);
+			});
+		}
 
 		return (
 			<div>
 				<h2>Play - Game entry point</h2>
-                {arr}
+				<select value={this.state.value} onChange={this.handleChange}>
+					{display}
+				</select>
+				<br />
+				<button onClick={event => console.log(event)}>Use Your Noodle!</button>
 			</div>
 		);
 	}
@@ -28,14 +56,16 @@ class GameMenu extends Component {
 const mapStateToProps = state => {
 	return {
 		categories: state.trivia.categories,
-		questions: state.trivia.questions
+		questions: state.trivia.questions,
+		categoryId: state.trivia.categoryId
 	};
 };
 
 const mapDispatchToProps = dispatch => {
 	return {
 		onFetchCategories: () => dispatch(actionCreators.fetchCategories()),
-		onFetchQuestions: () => dispatch({ types: actionTypes.FETCH_QUESTIONS })
+		onFetchQuestions: category =>
+			dispatch(actionCreators.fetchQuestions(category))
 	};
 };
 

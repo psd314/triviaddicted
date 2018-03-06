@@ -8,3 +8,12 @@ export const fetchCategories = () => {
 		});
 	};
 };
+
+export const fetchQuestions = (category) => {
+    return dispatch => {
+        axios.get("").then(resp => {
+            // dispatch({ type: actionTypes.FETCH_QUESTIONS, data: resp.data });
+        });
+    };
+};
+// https://opentdb.com/api.php?amount=10&category=17&difficulty=easy&type=multiple&encode=url3986
