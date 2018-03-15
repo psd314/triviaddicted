@@ -1,0 +1,10 @@
+.question-card {
+    display: inline-block;
+    margin: 10px;
+    width: 15%;
+    min-width: 150px;
+    height: 350px;
+    border: 1px solid #eee;
+    vertical-align: top;
+    /* box-shadow: 5px 5px 15px rgba(0, 0, 0, .5); */
+}
