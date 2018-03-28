@@ -11,7 +11,11 @@ import * as actionCreators from "../../store/actions/actionCreators";
 class GameMenu extends Component {
 	state = {
 		difficulty: "easy",
-		type: "any"
+		type: "any",
+		radioButtonValue: "",
+		correctAnswers: 0,
+		incorrectAnswers: 0,
+		answerStatus: ""
 	};
 
 	componentDidMount() {
@@ -25,6 +29,7 @@ class GameMenu extends Component {
 	}
 
 	handleGetQuestions = event => {
+		// this.props.categoryId set by onFetchCagegories() in componentDidMount()
 		const categoryId =
 			this.props.categoryId === "33" ? "any" : this.props.categoryId;
 		let options = {
@@ -35,24 +40,39 @@ class GameMenu extends Component {
 		this.props.onFetchQuestions(options);
 	};
 
+	// decrements questionIndex in Redux to cycle through questions[] (also in Redux, from Trivia API)
+	handleNextQuestion = () => {
+		this.props.onNextQuestion();
+
+		this.setState({ radioButtonValue: "", answerStatus: "" });
+	};
+
 	handleRadioChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
 	};
 
-	render() {
-		// convert questionStatus to state in triviaReducer
-		let questionStatus = "No Questions";
-		if (this.props.questions.length > 0) {
-			questionStatus = this.props.questions.map((el, i) => {
-				return (
-					<QuestionCard
-						key={el + i}
-						questionInfo={el}
-					/>
-				);
+	handleAnswerSubmit = () => {
+		const correctAnswer = this.props.questions[this.props.questionIndex]
+			.correct_answer;
+		if (correctAnswer === this.state.radioButtonValue) {
+			const correctCount = this.state.correctAnswers + 1;
+			this.setState({ answerStatus: "correct", correctAnswers: correctCount });
+		} else {
+			const incorrectCount = this.state.incorrectAnswers + 1;
+			this.setState({
+				answerStatus: "incorrect",
+				incorrectAnswers: incorrectCount
 			});
 		}
+	};
+	// timer
+	// flip card on click, start timer
+	// animations
+	// database - save stats, sessions
+	// database - auth
+	// play as a guest
 
+	render() {
 		return (
 			<div>
 				<h2>Play - Test Your Knowledge</h2>
@@ -72,7 +92,30 @@ class GameMenu extends Component {
 					checkedStatus={this.state.type}
 				/>
 				<button onClick={this.handleGetQuestions}>Get Your Questions</button>
-				<section>{questionStatus}</section>
+				<section>
+					<h3>
+						Questions Remaining:{this.props.questionIndex === -1
+							? 0
+							: this.props.questionIndex}
+					</h3>
+					<h4>
+						Correct: {this.state.correctAnswers} &nbsp; Incorrect:{" "}
+						{this.state.incorrectAnswers}
+					</h4>
+					<div>
+						{/* change this to add one more layer, use next question button to queue question, not automatically load it */}
+						{this.props.questionIndex >= 0 ? (
+							<QuestionCard
+								answerStatus={this.state.answerStatus}
+								questionInfo={this.props.questions[this.props.questionIndex]}
+								change={this.handleRadioChange}
+								checkedStatus={this.state.radioButtonValue}
+								submitAnswer={this.handleAnswerSubmit}
+								nextQuestion={this.handleNextQuestion}
+							/>
+						) : "No more questions!!!"}
+					</div>
+				</section>
 			</div>
 		);
 	}
@@ -82,7 +125,8 @@ const mapStateToProps = state => {
 	return {
 		categories: state.trivia.categories,
 		questions: state.trivia.questions,
-		categoryId: state.trivia.categoryId
+		categoryId: state.trivia.categoryId,
+		questionIndex: state.trivia.questionIndex
 	};
 };
 
@@ -92,7 +136,11 @@ const mapDispatchToProps = dispatch => {
 		onFetchQuestions: options =>
 			dispatch(actionCreators.fetchQuestions(options)),
 		onCategoryChange: event =>
-			dispatch({ type: actionTypes.UPDATE_CATEGORY, event: event.target.value })
+			dispatch({
+				type: actionTypes.UPDATE_CATEGORY,
+				event: event.target.value
+			}),
+		onNextQuestion: () => dispatch({ type: actionTypes.UPDATE_QUESTION_INDEX })
 	};
 };
 

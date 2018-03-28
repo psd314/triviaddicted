@@ -1,4 +1,5 @@
 import React from "react";
+import './RadioButton.css';
 import Auxiliary from "../../hoc/Auxiliary/Auxiliary";
 
 const radioButton = props => (
@@ -10,8 +11,8 @@ const radioButton = props => (
 			value={props.buttonValue}
 			checked={props.checkedStatus === props.buttonValue}
 		/>
-		{props.buttonValue}
-		<br />
+		{/* conditionally renders answers radio buttons (answerText) or question categories radio buttons (buttonValue) */}
+		<p className="radio-button-value">{props.answerText ? props.answerText : props.buttonValue}</p>
 	</Auxiliary>
 );
 

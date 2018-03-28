@@ -13,15 +13,6 @@ const sideDrawer = props => {
 			<i className="far fa-times-circle fa-3x" onClick={props.clicked} />
 		</div>
 	);
-	// return (props.show
-	//     ? <div className="SideDrawer">
-	//             <NavItems drawerStatus={props.drawerStatus} closeDrawer={props.closeDrawer} styleClasses="SideDrawerNav"/>
-	//             <i className="far fa-times-circle fa-3x" onClick={props.clicked}></i>
-	//         </div>
-	//     : <div className="SideDrawer CloseSideDrawer">
-	//         <NavItems drawerStatus={props.drawerStatus} closeDrawer={props.closeDrawer} styleClasses="SideDrawerNav"/>
-	//         <i className="far fa-times-circle fa-3x" onClick={props.clicked}></i>
-	//     </div>);
 };
 
 export default sideDrawer;

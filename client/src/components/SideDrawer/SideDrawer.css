@@ -10,11 +10,10 @@
     opacity: 1;
     transition-property: all;
     transition-duration: .65s;
+    /* z index -1, hide directly under page, translate right, zindex 200, tranlate left??? */
 }
 
 .CloseSideDrawer {
-    /* width: 0;
-    opacity: 0; */
     transform: translateX(100%);
 }
 
