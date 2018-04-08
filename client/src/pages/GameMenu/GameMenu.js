@@ -24,12 +24,12 @@ class GameMenu extends Component {
 	}
 
 	componentDidUpdate() {
-		console.log("state", this.state);
-		console.log("props:", this.props);
+		// console.log("state", this.state);
+		// console.log("props:", this.props);
 	}
 
 	handleGetQuestions = event => {
-		// this.props.categoryId set by onFetchCagegories() in componentDidMount()
+		// this.props.categoryId set by onFetchCategories() in componentDidMount()
 		const categoryId =
 			this.props.categoryId === "33" ? "any" : this.props.categoryId;
 		let options = {

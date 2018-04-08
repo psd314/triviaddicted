@@ -13,25 +13,19 @@ const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3001;
 
 let MONGODB_URI =
-	process.env.MONGODB_URI || "mongodb://localhost/triviaddicted";
+	process.env.MONGODB_URI || "mongodb://localhost:27017/triviaddicted";
 
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 
-app.use(morgan("dev"));
-app.use(cookieParser());
 
-// app.use(session({ secret: "SticksAndStonesWillBreakMyBones" }));
-// app.use(passport.initialize());
-// app.use(passport.session());
-// app.use(flash());
+app.use(morgan("dev"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.static("client/build"));
 app.use(routes);
-// require("./routes")(app, passport);
 
 app.listen(PORT, function() {
 	console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);

@@ -5,9 +5,21 @@ const login = props => {
 		<div>
 			Login now
 			<br />
-			<input type="email" placeholder="Username" />
+			<input
+				type="email"
+				placeholder="username"
+				name="username"
+				onChange={props.change}
+				value={props.inputValues.username}
+			/>
 			<br />
-			<input type="password" placeholder="Password" />
+			<input
+				type="password"
+				placeholder="password"
+				name="password"
+				onChange={props.change}
+				value={props.inputValues.password}
+			/>
 		</div>
 	);
 };

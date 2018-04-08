@@ -7,7 +7,7 @@ export default function(state) {
         errors.push("Please enter a valid email address");
     }
 
-    if (state.password !== state.confirmPassword) {
+    if (state.password !== state.confirmPassword && state.loginStatus === false) {
         errors.push("Passwords do not match");
     }
 
@@ -15,7 +15,7 @@ export default function(state) {
         errors.push("Password is a required field");
     }
 
-    if (state.confirmPassword.trim() === "") {
+    if (state.confirmPassword.trim() === "" && state.loginStatus === false) {
         errors.push("Confirm Password is a required field");
     }
 

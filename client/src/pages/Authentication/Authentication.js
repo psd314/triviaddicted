@@ -5,19 +5,17 @@ import SignUp from "./SignUp/SignUp";
 import axios from "axios";
 // import * as validation from '../../utils/authFormValidation';
 import validate from "../../utils/authFormValidation";
+import { connect } from "react-redux";
+import { login, logout } from "../../store/actions/actionCreators";
 
 class Authentication extends Component {
 	state = {
 		loginStatus: true,
-		username: "",
-		password: "",
+		username: "me@mail.com",
+		password: "password",
 		confirmPassword: "",
 		errors: []
 	};
-
-	// componentDidUpdate() {
-	// 	console.log(this.state.errors);
-	// }
 
 	handleLoginToggle = () => {
 		this.setState({ loginStatus: true });
@@ -28,23 +26,37 @@ class Authentication extends Component {
 	};
 
 	handleLoginUser = () => {
-		console.log("logging in");
-		axios.get("/login/local").then(resp => {
-			console.log(resp);
-		});
+		let errors = validate(this.state);
+		this.setState({ errors: errors });
+		if (!errors.length) {
+			const userInfo = {
+				email: this.state.username,
+				password: this.state.password
+			};
+			this.props.login(userInfo).then(resp => {
+				this.props.history.push("/play");
+			});
+		}
 	};
 
 	handleSignUpUser = () => {
-		let errors = validate(this.state);		
+		let errors = validate(this.state);
 		this.setState({ errors: errors });
 
 		if (!errors.length) {
 			const userInfo = {
-				username: this.state.username,
+				email: this.state.username,
 				password: this.state.password
 			};
 			axios.post("/signup/local", userInfo).then(resp => {
-				console.log("signup resp", resp);
+				console.log(resp.data);
+				if (resp.data === true) {
+					// add notification that signup was successful and to log in
+					this.setState({ loginStatus: true, username: "", password: "" });
+				} else {
+					let errors = [resp.data.message];
+					this.setState({ errors: errors });
+				}
 			});
 		}
 	};
@@ -93,10 +105,16 @@ class Authentication extends Component {
 				>
 					Sign Up
 				</button>
+				<br />
+				<button onClick={this.props.logout}>Logout</button>
+				<br />
+				<button onClick={() => alert("Be our guest.")}>
+					Play as Guest
+				</button>
 				{errorMessages}
 			</div>
 		);
 	}
 }
 
-export default Authentication;
+export default connect(null, { login, logout })(Authentication);

@@ -10,7 +10,7 @@ const initialState = {
 const reducer = (state = initialState, action) => {
 	switch (action.type) {
 		case actionTypes.FETCH_CATEGORIES:
-            const catArray = action.data.trivia_categories; // fixed async issue by declaring before concatenating
+            const catArray = action.data; // fixed async issue by declaring before concatenating
             return {
 				...state,
                 categories: catArray,

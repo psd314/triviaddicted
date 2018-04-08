@@ -1,15 +1,17 @@
 import * as actionTypes from "../actions/actionTypes";
+import isEmpty from 'lodash/isEmpty';
 
 const initialState = {
-	loggedIn: false
+	isAuthenticated: false,
+	user: {}
 };
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = initialState, action = {}) => {
 	switch (action.type) {
-		case actionTypes.LOGGED_IN:
+		case actionTypes.SET_CURRENT_USER:
 			return {
-				...state,
-				loggedIn: true
+				isAuthenticated: !isEmpty(action.user),
+				user: action.user
             }
         default:
             return state;
