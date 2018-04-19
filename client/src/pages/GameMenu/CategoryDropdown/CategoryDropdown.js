@@ -6,7 +6,7 @@ import * as actionTypes from "../../../store/actions/actionTypes";
 const categoryDropdown = props => {
 	let categories = [];
     let selectMenu = "Loading...";
-    
+
 	if (props.categories) {
 		categories = props.categories.map(el => {
 			return (

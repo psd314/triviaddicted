@@ -1,20 +1,43 @@
 .question-card {
-    display: inline-block;
-    margin: 10px;
-    width: 20%;
-    min-width: 150px;
-    /* height: 350px; */
-    border: 1px solid #eee;
-    vertical-align: top;
-    /* box-shadow: 5px 5px 15px rgba(0, 0, 0, .5); */
+	perspective: 150rem;
+	-moz-perspective: 150rem;
+	position: relative;
+	width: 300px;
+	margin: auto;
+}
+
+.question-card__side {
+	height: 350px;
+	border: 1px solid #eee;
+	vertical-align: top;
+	transition: all 0.8s ease;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	backface-visibility: hidden;
+	border-radius: 3px;
+	overflow: hidden;
+	box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.15);
+}
+
+.question-card__back {
+    transform: rotateY(180deg);
+}
+
+.flip-front {
+    transform: rotateY(-180deg);
+}
+.flip-back {
+    transform: rotateY(0);
 }
 
 .correct {
-    border: 1px solid green;
-    box-shadow: 0 1rem 1rem green;
+	border: 1px solid green;
+	box-shadow: 0 1rem 1rem green;
 }
 
 .incorrect {
-    border: 1px solid red;
-    box-shadow: 0 1rem 1rem red;
+	border: 1px solid red;
+	box-shadow: 0 1rem 1rem red;
 }

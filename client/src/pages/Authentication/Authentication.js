@@ -6,7 +6,7 @@ import axios from "axios";
 // import * as validation from '../../utils/authFormValidation';
 import validate from "../../utils/authFormValidation";
 import { connect } from "react-redux";
-import { login, logout } from "../../store/actions/actionCreators";
+import { login, logout, guestLogin } from "../../store/actions/actionCreators";
 
 class Authentication extends Component {
 	state = {
@@ -49,7 +49,6 @@ class Authentication extends Component {
 				password: this.state.password
 			};
 			axios.post("/signup/local", userInfo).then(resp => {
-				console.log(resp.data);
 				if (resp.data === true) {
 					// add notification that signup was successful and to log in
 					this.setState({ loginStatus: true, username: "", password: "" });
@@ -60,6 +59,16 @@ class Authentication extends Component {
 			});
 		}
 	};
+
+	handleGuest = () => {
+		const userInfo = {
+			email: 'guest',
+			password: 'guest'
+		}
+		this.props.guestLogin(userInfo).then(_resp => {
+			this.props.history.push("/play");
+		});
+	}
 
 	handleInputChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -108,7 +117,7 @@ class Authentication extends Component {
 				<br />
 				<button onClick={this.props.logout}>Logout</button>
 				<br />
-				<button onClick={() => alert("Be our guest.")}>
+				<button onClick={this.handleGuest}>
 					Play as Guest
 				</button>
 				{errorMessages}
@@ -117,4 +126,5 @@ class Authentication extends Component {
 	}
 }
 
-export default connect(null, { login, logout })(Authentication);
+export default connect(null, { login, logout, guestLogin })(Authentication);
+// check for jwt token on refresh

@@ -1,78 +1,141 @@
-import React from "react";
+import React, { Component } from "react";
 import "./QuestionCard.css";
 import RadioButton from "../../../components/RadioButton/RadioButton";
 
-const questionCard = props => {
-	let choices = [];
-	let answerChoices = "";
-	const parser = new DOMParser();
+class QuestionCard extends Component {
+	state = {
+		timer: 3,
+		intervalID: -1,
+		flip: false
+	};
 
-	if (props.questionInfo.type === "multiple") {
-		choices = choices.concat(props.questionInfo.correct_answer);
-		choices = choices.concat(props.questionInfo.incorrect_answers);
-		//shuffle answers so correct is not always first
-		// for (let i = 0; i < choices.length; i++) {
-		// 	let rand = Math.floor(Math.random() * choices.length);
-		// 	let swap = choices[i];
-		// 	choices[i] = choices[rand];
-		// 	choices[rand] = swap;
-		// }
+	componentDidMount() {}
 
-		answerChoices = choices.map((el, i) => {
-			const text = parser.parseFromString(el, 'text/html');
-			return (
-				<div key={el}>
-					<RadioButton
-						change={props.change}
-						inputType="radio"
-						groupName="radioButtonValue"
-						buttonValue={text.body.innerHTML}
-						answerText={text.body.innerHTML}
-						checkedStatus={props.checkedStatus}
-					/>
-				</div>
-			);
-		});
-	} else {
-		choices = ["True", "False"];
-		answerChoices = choices.map((el, i) => {
-			const text = parser.parseFromString(el, 'text/html');
-			return (
-				<div key={el}>
-					<RadioButton
-						change={props.change}
-						inputType="radio"
-						groupName="radioButtonValue"
-						buttonValue={el}
-						answerText={text.body.innerHTML}
-						checkedStatus={props.checkedStatus}
-					/>
-				</div>
-			);
-		});
+	componentDidUpdate() {
+		if (this.state.timer === 0) {
+			clearInterval(this.state.intervalID);
+			this.setState({ timer: "--", intervalID: -1 });
+			this.props.submitAnswer();
+		}
 	}
 
-	let button = <button  onClick={props.submitAnswer}>Submit</button>;
-	if (props.answerStatus !== "") {
-		button = <button  onClick={props.nextQuestion}>Next Question</button>;
-	}
+	handleStartTimer = () => {
+		if (this.props.questionIndex > 0) {
+			let intervalID = setInterval(() => {
+				let time = this.state.timer - 1;
+				this.setState({ timer: time });
+			}, 1000);
+			this.setState({ timer: 3, intervalID: intervalID });
+		}
+	};
 
-	// Decode special characters from string, a little hacky, maybe replace with 'he' library later
-	const dom = parser.parseFromString(props.questionInfo.question, 'text/html');
+	handleNextQuestion = () => {
+		clearInterval(this.state.intervalID);
+		this.props.nextQuestion();
+		this.setState({ timer: 3, flip: false });
+	};
 
-	return (
-		<div className={["question-card", props.answerStatus].join(' ')}>
-			<div>Timer: </div>
-			<h3>Category: {props.questionInfo.category}</h3>
-			<p>{dom.body.innerHTML}</p>
-			<div>
-				Choices
-				<br />
-				{answerChoices}
+	handleCardFlip = () => {
+		let flipStatus = !this.state.flip;
+		this.setState({ flip: flipStatus });
+		this.handleStartTimer();
+	};
+
+	render() {
+		let choices = this.props.choices;
+		let answerChoices = "";
+		const parser = new DOMParser();
+
+		if (this.props.questionInfo.type === "multiple") {
+			answerChoices = choices.map((el, i) => {
+				const text = parser.parseFromString(el, "text/html");
+				return (
+					<div key={el}>
+						<RadioButton
+							change={this.props.change}
+							inputType="radio"
+							groupName="radioButtonValue"
+							buttonValue={text.body.innerHTML}
+							answerText={text.body.innerHTML}
+							checkedStatus={this.props.checkedStatus}
+						/>
+					</div>
+				);
+			});
+		} else {
+			choices = ["True", "False"];
+			answerChoices = choices.map((el, i) => {
+				const text = parser.parseFromString(el, "text/html");
+				return (
+					<div key={el}>
+						<RadioButton
+							change={this.props.change}
+							inputType="radio"
+							groupName="radioButtonValue"
+							buttonValue={el}
+							answerText={text.body.innerHTML}
+							checkedStatus={this.props.checkedStatus}
+						/>
+					</div>
+				);
+			});
+		}
+		// need to clear timer on submit
+		let button = (
+			<button
+				onClick={() => {
+					this.props.submitAnswer();
+					clearInterval(this.state.intervalID);
+					this.setState({ timer: "--" });
+				}}
+			>
+				Submit
+			</button>
+		);
+		if (this.props.answerStatus !== "") {
+			button = <button onClick={this.handleNextQuestion}>Next Question</button>;
+		}
+
+		// Decode special characters from string, a little hacky, maybe replace with 'he' library later
+		const dom = parser.parseFromString(
+			this.props.questionInfo.question,
+			"text/html"
+		);
+
+		return (
+			<div className="question-card">
+				<div
+					className={[
+						"question-card__back",
+						"question-card__side",
+						this.props.answerStatus,
+						this.state.flip ? "flip-back" : ""
+					].join(" ")}
+				>
+					<div onClick={this.handleStartTimer}>Timer: {this.state.timer}</div>
+					<h3>Category: {this.props.questionInfo.category}</h3>
+					<p>{dom.body.innerHTML}</p>
+					<div>
+						Choices
+						<br />
+						{answerChoices}
+					</div>
+					{button}
+				</div>
+				<div
+					className={[
+						"question-card__front",
+						"question-card__side",
+						this.state.flip ? "flip-front" : ""
+					].join(" ")}
+					onClick={this.handleCardFlip}
+				>
+					I'm the front
+				</div>
 			</div>
-			{button}			
-		</div>
-	);
-};
+		);
+	}
+}
 
-export default questionCard;
+export default QuestionCard;
+// work on ui/ux for cards, add animations to sequence of changing to next question

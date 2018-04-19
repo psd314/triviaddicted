@@ -9,8 +9,8 @@ const navItems = (props) => {
             <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/">Home</Link></li>
             <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/authentication">Login/Sign Up</Link></li>
             <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/play">Play</Link></li>
-            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/leaderboard">Leaderboard</Link></li>
-            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/settings">Settings</Link></li>
+            {/* <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/leaderboard">Leaderboard</Link></li> */}
+            <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/settings">Profile &amp; Settings</Link></li>
             <li><Link onClick={props.drawerStatus ? () => props.closeDrawer() : null} to="/home">Logout</Link></li>
         </ul>
     );

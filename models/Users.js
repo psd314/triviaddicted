@@ -6,6 +6,10 @@ const userSchema = mongoose.Schema({
 		email: String,
 		password: String
 	},
+	guest: {
+		id: String,
+		ip: String
+	},
 	facebook: {
 		id: String,
 		token: String,

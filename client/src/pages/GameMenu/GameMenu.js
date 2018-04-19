@@ -24,8 +24,15 @@ class GameMenu extends Component {
 	}
 
 	componentDidUpdate() {
+		// if (this.state.timer == 0) {
+		// 	clearInterval(this.state.intervalID);
+		// }
 		// console.log("state", this.state);
 		// console.log("props:", this.props);
+	}
+
+	componentWillUnmount() {
+		clearInterval(this.state.intervalID);
 	}
 
 	handleGetQuestions = event => {
@@ -40,10 +47,9 @@ class GameMenu extends Component {
 		this.props.onFetchQuestions(options);
 	};
 
-	// decrements questionIndex in Redux to cycle through questions[] (also in Redux, from Trivia API)
+	// decrements questionIndex in Redux to cycle through questions[] (questions variable also in Redux, from Trivia API)
 	handleNextQuestion = () => {
 		this.props.onNextQuestion();
-
 		this.setState({ radioButtonValue: "", answerStatus: "" });
 	};
 
@@ -65,14 +71,22 @@ class GameMenu extends Component {
 			});
 		}
 	};
-	// timer
-	// flip card on click, start timer
-	// animations
-	// database - save stats, sessions
-	// database - auth
-	// play as a guest
 
 	render() {
+		let choices = [];
+		if (
+			this.props.questionIndex !== -1 &&
+			this.props.questions[this.props.questionIndex].type === "multiple"
+		) {
+			choices = choices.concat(
+				this.props.questions[this.props.questionIndex].choices
+			);
+		} else if (
+			this.props.questionIndex !== -1 &&
+			this.props.questions[this.props.questionIndex].type === "boolean"
+		) {
+			choices = ["True", "False"];
+		}
 		return (
 			<div>
 				<h2>Play - Test Your Knowledge</h2>
@@ -103,17 +117,20 @@ class GameMenu extends Component {
 						{this.state.incorrectAnswers}
 					</h4>
 					<div>
-						{/* change this to add one more layer, use next question button to queue question, not automatically load it */}
 						{this.props.questionIndex >= 0 ? (
 							<QuestionCard
 								answerStatus={this.state.answerStatus}
 								questionInfo={this.props.questions[this.props.questionIndex]}
+								questionIndex={this.props.questionIndex}
 								change={this.handleRadioChange}
 								checkedStatus={this.state.radioButtonValue}
 								submitAnswer={this.handleAnswerSubmit}
 								nextQuestion={this.handleNextQuestion}
+								choices={choices}
 							/>
-						) : "No more questions!!!"}
+						) : (
+							"No more questions!!!"
+						)}
 					</div>
 				</section>
 			</div>
@@ -145,3 +162,6 @@ const mapDispatchToProps = dispatch => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameMenu);
+// animations
+// hide next question
+// database - save stats, sessions

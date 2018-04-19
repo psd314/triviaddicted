@@ -13,16 +13,16 @@ router.route("/categories").post((req, res) => {
 		categories.unshift({
 			id: categories[categories.length - 1].id + 1,
 			name: "Any"
-        });
-        
-        res.json(categories);
+		});
+
+		res.json(categories);
 	});
 });
 
 router.route("/questions").post((req, res) => {
-    axios.get(req.body.url).then(resp => {
-        res.json(resp.data);
-    });
+	axios.get(req.body.url).then(resp => {
+		res.json(resp.data);
+	});
 });
 
 router.route("/login/local").post((req, res) => {
@@ -51,6 +51,60 @@ router.route("/login/local").post((req, res) => {
 			});
 		} else {
 			res.json({ message: "Invalid email and/or password" });
+		}
+	});
+});
+
+router.route("/login/guest").post((req, res) => {
+	const ip =
+		req.headers["x-forwarded-for"].split(",").pop() ||
+		req.connection.remoteAddress ||
+		req.socket.remoteAddress ||
+		req.connection.socket.remoteAddress;
+	console.log(ip);
+	console.log(req.headers["x-forwarded-for"].split(",").pop());
+	// console.log(req.connection.remoteAddress);
+	// console.log(req.socket.remoteAddress);
+	// console.log(req.connection.socket.remoteAddress);
+	// console.log('auth', req.headers['Authorization']);
+	// find return, .then()
+	// compare hash for guest.ip
+	db.User.findOne({ "guest.ip": ip }).then(user => {
+		if (user === null) {
+			bcrypt.hash(ip, 10, (err, hash) => {
+				db.User.create({
+					guest: { ip: hash }
+				}).then( encryptedUser => {
+					console.log(encryptedUser);
+					const token = jwt.sign(
+						{
+							id: encryptedUser._id,
+							name: encryptedUser.guest.ip
+						},
+						config.jwtSecret
+					);
+					res.json({ token });
+				});
+			});
+			// db.User.create({ guest: { ip: ip } }).then(_ => {
+			// 	const token = jwt.sign(
+			// 		{
+			// 			id: user._id,
+			// 			name: user.local.email
+			// 		},
+			// 		config.jwtSecret
+			// 	);
+			// 	res.json({ token });
+			// });
+		} else {
+			const token = jwt.sign(
+				{
+					id: user._id,
+					name: user.local.email
+				},
+				config.jwtSecret
+			);
+			res.json({ token });
 		}
 	});
 });

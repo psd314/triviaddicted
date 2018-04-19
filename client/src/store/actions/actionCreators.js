@@ -49,8 +49,20 @@ export function login(data) {
 	};
 }
 
+export function guestLogin(data) {
+	return dispatch => {
+		return axios.post("/login/guest", data).then(res => {
+			console.log('guest', res);
+			const token = res.data.token;
+			localStorage.setItem("jwtToken", token);
+			setJwtToken(token);
+			dispatch(setCurrentUser(jwt.decode(token)));
+		});
+	};
+}
+
 export function logout() {
-	console.log("loggin ot");
+	console.log("loggin out");
 	return dispatch => {
 		localStorage.removeItem("jwtToken");
 		setJwtToken(false);
