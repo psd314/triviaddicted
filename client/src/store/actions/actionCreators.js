@@ -51,7 +51,7 @@ export function login(data) {
 
 export function guestLogin(data) {
 	return dispatch => {
-		return axios.post("/login/guest", data).then(res => {
+		return axios.post("/login/guest", {data: data}).then(res => {
 			console.log('guest', res);
 			const token = res.data.token;
 			localStorage.setItem("jwtToken", token);

@@ -27,9 +27,6 @@ router.route("/questions").post((req, res) => {
 
 router.route("/login/local").post((req, res) => {
 	// server side validation here
-	// make jwt
-	// seat jwt in local storage
-	// remove jwt in local storage on logout
 	db.User.findOne({ "local.email": req.body.email }).then(user => {
 		if (user) {
 			bcrypt.compare(req.body.password, user.local.password, (err, resp) => {
@@ -61,52 +58,47 @@ router.route("/login/guest").post((req, res) => {
 		req.connection.remoteAddress ||
 		req.socket.remoteAddress ||
 		req.connection.socket.remoteAddress;
-	console.log(ip);
-	console.log(req.headers["x-forwarded-for"].split(",").pop());
-	// console.log(req.connection.remoteAddress);
-	// console.log(req.socket.remoteAddress);
-	// console.log(req.connection.socket.remoteAddress);
-	// console.log('auth', req.headers['Authorization']);
-	// find return, .then()
-	// compare hash for guest.ip
-	db.User.findOne({ "guest.ip": ip }).then(user => {
-		if (user === null) {
-			bcrypt.hash(ip, 10, (err, hash) => {
-				db.User.create({
-					guest: { ip: hash }
-				}).then( encryptedUser => {
-					console.log(encryptedUser);
-					const token = jwt.sign(
-						{
-							id: encryptedUser._id,
-							name: encryptedUser.guest.ip
-						},
-						config.jwtSecret
-					);
-					res.json({ token });
+
+	if (Object.keys(req.body).length > 0) {
+		data = jwt.decode(req.body.data);
+
+		db.User.findOne({ _id: data.id }).then(user => {
+			if (user.guest.ip === data.name) {
+				res.json({ token: req.body.data });
+			} else {
+				bcrypt.hash(ip, 10, (err, hash) => {
+					db.User.create({
+						guest: { ip: hash }
+					}).then(encryptedUser => {
+						const token = jwt.sign(
+							{
+								id: encryptedUser._id,
+								name: encryptedUser.guest.ip
+							},
+							config.jwtSecret
+						);
+						res.json({ token });
+					});
 				});
+			}
+		});
+	} else {
+		bcrypt.hash(ip, 10, (err, hash) => {
+			db.User.create({
+				guest: { ip: hash }
+			}).then(encryptedUser => {
+				// console.log(encryptedUser);
+				const token = jwt.sign(
+					{
+						id: encryptedUser._id,
+						name: encryptedUser.guest.ip
+					},
+					config.jwtSecret
+				);
+				res.json({ token });
 			});
-			// db.User.create({ guest: { ip: ip } }).then(_ => {
-			// 	const token = jwt.sign(
-			// 		{
-			// 			id: user._id,
-			// 			name: user.local.email
-			// 		},
-			// 		config.jwtSecret
-			// 	);
-			// 	res.json({ token });
-			// });
-		} else {
-			const token = jwt.sign(
-				{
-					id: user._id,
-					name: user.local.email
-				},
-				config.jwtSecret
-			);
-			res.json({ token });
-		}
-	});
+		});
+	}
 });
 
 router.route("/signup/local").post((req, res) => {
@@ -125,3 +117,13 @@ router.route("/signup/local").post((req, res) => {
 });
 
 module.exports = router;
+// README
+// change 'logout' if guest to 'login/sign up'
+// get stats !!!! Show percentile graph maybe???
+// add stats
+// sidedrawer fix? display:none, animation: 1% display: inline-block, translateX???
+// style
+// search.then( ()=> return resp).then(data => return etc).then()
+
+// timer freezes on last card sometimes -- bug
+//hide get questions when playing until questions are out, current bug

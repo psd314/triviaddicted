@@ -20,10 +20,11 @@ class QuestionCard extends Component {
 	}
 
 	handleStartTimer = () => {
-		if (this.props.questionIndex > 0) {
+		if (this.props.questionIndex >= 0) {
 			let intervalID = setInterval(() => {
 				let time = this.state.timer - 1;
 				this.setState({ timer: time });
+				console.log(time);
 			}, 1000);
 			this.setState({ timer: 3, intervalID: intervalID });
 		}
@@ -48,7 +49,9 @@ class QuestionCard extends Component {
 
 		if (this.props.questionInfo.type === "multiple") {
 			answerChoices = choices.map((el, i) => {
+				const rawText = el;
 				const text = parser.parseFromString(el, "text/html");
+				
 				return (
 					<div key={el}>
 						<RadioButton
@@ -58,6 +61,8 @@ class QuestionCard extends Component {
 							buttonValue={text.body.innerHTML}
 							answerText={text.body.innerHTML}
 							checkedStatus={this.props.checkedStatus}
+							answerStatus={this.props.answerStatus}
+							correct={this.props.correctAnswer === rawText}
 						/>
 					</div>
 				);
@@ -65,6 +70,8 @@ class QuestionCard extends Component {
 		} else {
 			choices = ["True", "False"];
 			answerChoices = choices.map((el, i) => {
+				console.log(this.props.correctAnswer === el);
+				const rawText = el;
 				const text = parser.parseFromString(el, "text/html");
 				return (
 					<div key={el}>
@@ -75,12 +82,13 @@ class QuestionCard extends Component {
 							buttonValue={el}
 							answerText={text.body.innerHTML}
 							checkedStatus={this.props.checkedStatus}
+							answerStatus={this.props.answerStatus}
+							correct={this.props.correctAnswer === rawText}
 						/>
 					</div>
 				);
 			});
 		}
-		// need to clear timer on submit
 		let button = (
 			<button
 				onClick={() => {
@@ -114,8 +122,10 @@ class QuestionCard extends Component {
 				>
 					<div onClick={this.handleStartTimer}>Timer: {this.state.timer}</div>
 					<h3>Category: {this.props.questionInfo.category}</h3>
-					<p>{dom.body.innerHTML}</p>
-					<div>
+					<p className={[this.state.flip ? "" : "hide-content"]}>
+						{dom.body.innerHTML}
+					</p>
+					<div className={[this.state.flip ? "" : "hide-content"]}>
 						Choices
 						<br />
 						{answerChoices}
@@ -138,4 +148,3 @@ class QuestionCard extends Component {
 }
 
 export default QuestionCard;
-// work on ui/ux for cards, add animations to sequence of changing to next question

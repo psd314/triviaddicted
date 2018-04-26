@@ -16,7 +16,12 @@ class Authentication extends Component {
 		confirmPassword: "",
 		errors: []
 	};
-
+	componentDidMount() {
+		const token = localStorage.jwtToken;
+		if (token && (this.props.location !== '/' || this.props.location !== '/authentication')) {
+			this.props.history.push('play');
+		}
+	}
 	handleLoginToggle = () => {
 		this.setState({ loginStatus: true });
 	};
@@ -61,14 +66,10 @@ class Authentication extends Component {
 	};
 
 	handleGuest = () => {
-		const userInfo = {
-			email: 'guest',
-			password: 'guest'
-		}
-		this.props.guestLogin(userInfo).then(_resp => {
+		this.props.guestLogin(localStorage.jwtToken).then(_resp => {
 			this.props.history.push("/play");
 		});
-	}
+	};
 
 	handleInputChange = event => {
 		this.setState({ [event.target.name]: event.target.value });
@@ -117,9 +118,7 @@ class Authentication extends Component {
 				<br />
 				<button onClick={this.props.logout}>Logout</button>
 				<br />
-				<button onClick={this.handleGuest}>
-					Play as Guest
-				</button>
+				<button onClick={this.handleGuest}>Play as Guest</button>
 				{errorMessages}
 			</div>
 		);

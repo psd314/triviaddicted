@@ -127,6 +127,9 @@ class GameMenu extends Component {
 								submitAnswer={this.handleAnswerSubmit}
 								nextQuestion={this.handleNextQuestion}
 								choices={choices}
+								correctAnswer={
+									this.props.questions[this.props.questionIndex].correct_answer
+								}
 							/>
 						) : (
 							"No more questions!!!"
@@ -152,16 +155,8 @@ const mapDispatchToProps = dispatch => {
 		onFetchCategories: () => dispatch(actionCreators.fetchCategories()),
 		onFetchQuestions: options =>
 			dispatch(actionCreators.fetchQuestions(options)),
-		onCategoryChange: event =>
-			dispatch({
-				type: actionTypes.UPDATE_CATEGORY,
-				event: event.target.value
-			}),
 		onNextQuestion: () => dispatch({ type: actionTypes.UPDATE_QUESTION_INDEX })
 	};
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameMenu);
-// animations
-// hide next question
-// database - save stats, sessions
